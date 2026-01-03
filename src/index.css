@@ -1,0 +1,211 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 24 10% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 4%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 24 10% 96%;
+    --secondary-foreground: 24 10% 4%;
+
+    --muted: 24 10% 96%;
+    --muted-foreground: 24 10% 40%;
+
+    --accent: 24 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 24 10% 90%;
+    --input: 24 10% 90%;
+    --ring: 24 95% 53%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 24 10% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 24 10% 6%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 24 10% 4%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 24 10% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 24 10% 15%;
+    --muted-foreground: 24 5% 65%;
+
+    --accent: 24 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 24 10% 15%;
+    --input: 24 10% 15%;
+    --ring: 24 95% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border selection:bg-primary/30 selection:text-foreground;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Outfit", system-ui, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply tracking-tight font-semibold;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-card/40 backdrop-blur-xl border border-foreground/10;
+  }
+
+  .glass-dark {
+    @apply bg-background/60 backdrop-blur-2xl border border-foreground/5;
+  }
+
+  .hero-gradient {
+    background: radial-gradient(
+      circle at 50% -20%,
+      hsla(var(--primary), 0.08) 0%,
+      transparent 70%
+    );
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground/90 to-primary/60;
+  }
+
+  .animated-beam {
+    @apply relative overflow-hidden;
+  }
+
+  .animated-beam::after {
+    content: "";
+    @apply absolute inset-0 -translate-x-full;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsla(var(--primary), 0.05),
+      hsla(var(--primary), 0.1),
+      hsla(var(--primary), 0.05),
+      transparent
+    );
+    animation: beam 3s infinite;
+  }
+
+  .beam-border {
+    @apply relative overflow-hidden transition-all duration-300;
+  }
+
+  .beam-border::before {
+    content: "";
+    @apply absolute inset-0 -translate-x-full transition-transform duration-700 opacity-0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsla(var(--primary), 0.5),
+      transparent
+    );
+    height: 1px;
+    z-index: 10;
+  }
+
+  .beam-border:hover::before {
+    @apply translate-x-full opacity-100;
+  }
+
+  @keyframes beam {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .mesh-bg {
+    background-image: radial-gradient(
+        at 0% 0%,
+        hsla(var(--primary), 0.04) 0px,
+        transparent 50%
+      ),
+      radial-gradient(
+        at 100% 0%,
+        hsla(var(--primary), 0.03) 0px,
+        transparent 50%
+      );
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted/30 rounded-full border-4 border-background;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted/50;
+}
+
+/* Page Transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 500ms, transform 500ms;
+}
