@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { Heart, Zap } from 'lucide-react'
 
 export default function About() {
+  const navigate = useNavigate()
   return (
     <div className="min-h-screen w-full bg-background">
       {/* Hero Section */}
@@ -49,7 +51,7 @@ export default function About() {
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
-                  {stat.value}
+                   {stat.value}
                 </div>
                 <div className="text-sm text-muted-foreground uppercase tracking-widest text-[10px] font-bold">{stat.label}</div>
               </div>
@@ -142,7 +144,7 @@ export default function About() {
               <span className="opacity-50">Future of Cinema.</span>
             </h2>
             <button
-              onClick={() => window.location.href = '/discovery'}
+              onClick={() => navigate('/discovery')}
               className="px-12 py-4 bg-primary text-primary-foreground rounded-xl font-bold hover:bg-primary/90 transition-opacity text-lg tracking-widest uppercase beam-border"
             >
               Start Discovery

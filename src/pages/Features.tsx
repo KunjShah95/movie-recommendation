@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { 
   Brain, 
   Zap, 
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react'
 
 export default function Features() {
+  const navigate = useNavigate()
   const capabilities = [
     {
       icon: Cloud,
@@ -187,7 +189,7 @@ export default function Features() {
               CinePulse isn't just a recommendation engine. It's an interface between human emotion and the art of cinema.
             </p>
             <button
-              onClick={() => window.location.href = '/discovery'}
+              onClick={() => navigate('/discovery')}
               className="px-16 py-6 bg-primary text-black rounded-[2rem] font-bold hover:bg-primary/90 transition-all text-xl tracking-widest uppercase active:scale-95 beam-border"
             >
               Initialize Discovery

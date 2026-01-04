@@ -1,6 +1,7 @@
 # app/main.py
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.api.v1 import recommend, research, auth, users, watchlist, chat, share
@@ -11,6 +12,24 @@ logger = get_logger(__name__)
 app = FastAPI(
     title=settings.APP_NAME,
     debug=settings.DEBUG
+)
+
+# Configure CORS - Allow frontend to communicate with backend
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://localhost:5173",  # Vite default
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods including OPTIONS
+    allow_headers=["*"],  # Allow all headers
 )
 
 app.include_router(recommend.router, prefix=f"{settings.API_V1_STR}/recommend", tags=["recommend"])

@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { Mail, MessageSquare, Send } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Contact() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -239,7 +241,7 @@ export default function Contact() {
               Still have <span className="opacity-50">Questions?</span>
             </h2>
             <button
-              onClick={() => window.location.href = '/discovery'}
+              onClick={() => navigate('/discovery')}
               className="px-12 py-5 bg-primary text-primary-foreground rounded-xl font-bold hover:bg-primary/90 transition-opacity text-lg tracking-widest uppercase active:scale-95 beam-border"
             >
               Consult the Engine

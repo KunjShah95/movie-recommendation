@@ -11,7 +11,7 @@ class GeminiService:
         if settings.GOOGLE_API_KEY:
             try:
                 genai.configure(api_key=settings.GOOGLE_API_KEY)
-                self.model = genai.GenerativeModel('gemini-3-flash')
+                self.model = genai.GenerativeModel('gemini-2.0-flash')
                 self.enabled = True
                 logger.info("Gemini Service initialized successfully.")
             except Exception as e:
@@ -19,7 +19,7 @@ class GeminiService:
 
     async def generate_explanation(self, movie_title: str, user_mood: str, user_intent: str) -> str:
         if not self.enabled:
-            return f"This movie perfectly matches your {user_mood} mood."
+            return f"This movie is a great match for your {user_mood} mood!"
 
         prompt = f"""
         User is feeling: {user_mood}
@@ -35,15 +35,16 @@ class GeminiService:
             return response.text.strip()
         except Exception as e:
             logger.error(f"Gemini generation error: {e}")
-            return f"The emotional arc of {movie_title} resonates deeply with your current state."
+            return f"This movie really fits the vibe you're looking for right now!"
 
     async def generate_raw_text(self, prompt: str) -> str:
         if not self.enabled:
-            return "My cinematic systems are currently offline, but I am still here to guide you."
+            return "Hey! I'm having some technical issues right now, but I'd love to help you find a great movie. What are you in the mood for?"
             
         try:
             response = self.model.generate_content(prompt)
             return response.text.strip()
         except Exception as e:
             logger.error(f"Gemini raw generation error: {e}")
-            return "The archives are momentarily quiet. Please ask again."
+            return "Oops, something went wrong on my end. Could you try asking that again?"
+

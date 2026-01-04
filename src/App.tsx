@@ -39,9 +39,12 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/features" element={<Features />} />
+                  <Route path="/systems" element={<Navigate to="/features" replace />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/connect" element={<Navigate to="/contact" replace />} />
                   <Route path="/discovery" element={<Discovery />} />
+                  <Route path="/explore" element={<Navigate to="/discovery" replace />} />
                   <Route path="/recommendations" element={<Recommendations />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />

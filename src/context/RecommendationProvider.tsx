@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useCallback, type ReactNode } from 'react';
 import { RecommendationContext } from './RecommendationContext';
 import type { Movie } from '@/types/recommendation';
 
@@ -11,9 +11,9 @@ export function RecommendationProvider({ children }: { children: ReactNode }) {
   const [explanation, setExplanation] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const updateContext = (key: string, value: string | number | boolean) => {
+  const updateContext = useCallback((key: string, value: string | number | boolean) => {
     setContext(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   return (
     <RecommendationContext.Provider
