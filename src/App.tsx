@@ -16,34 +16,37 @@ function ScrollToTop() {
   }, [pathname])
   return null
 }
-
 import { ThemeProvider } from './components/ThemeProvider'
+import { RecommendationProvider } from './context/RecommendationProvider'
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="cinepulse-theme">
-      <BrowserRouter>
-        <ScrollToTop />
-        <div className="min-h-screen bg-background">
-          {/* Header Navigation */}
-          <Header />
+      <RecommendationProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <div className="min-h-screen bg-background">
+            {/* Header Navigation */}
+            <Header />
 
-          {/* Content */}
-          <div className="relative">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/discovery" element={<Discovery />} />
-              <Route path="/recommendations" element={<Recommendations />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+            {/* Content */}
+            <div className="relative">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/features" element={<Features />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/discovery" element={<Discovery />} />
+                <Route path="/recommendations" element={<Recommendations />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </div>
           </div>
-        </div>
-      </BrowserRouter>
+        </BrowserRouter>
+      </RecommendationProvider>
     </ThemeProvider>
   )
 }
+
 
 export default App

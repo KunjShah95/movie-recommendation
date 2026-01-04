@@ -3,6 +3,7 @@ import MoodInput from '@/components/sections/MoodInput'
 import IntentSelection from '@/components/sections/IntentSelection'
 import ContextAwareness from '@/components/sections/ContextAwareness'
 import PersonalitySnapshot from '@/components/sections/PersonalitySnapshot'
+import CinematicDetective from '@/components/sections/CinematicDetective'
 import RecommendCTA from '@/components/sections/RecommendCTA'
 
 export default function Discovery() {
@@ -20,9 +21,11 @@ export default function Discovery() {
           <IntentSelection />
           <ContextAwareness />
           <PersonalitySnapshot />
+          <CinematicDetective />
           <RecommendCTA />
         </div>
       </main>
     </div>
   )
 }
+

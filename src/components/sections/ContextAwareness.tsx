@@ -6,10 +6,21 @@ import { Slider } from '@/components/ui/slider'
 import { fadeInUp, staggerContainer } from '@/lib/animations'
 import { Clock, Smartphone, User, Users as UsersIcon, Zap } from 'lucide-react'
 
+import { useRecommendation } from '@/context/RecommendationContext'
+import { useEffect } from 'react'
+
 export default function ContextAwareness() {
-  const [isAlone, setIsAlone] = useState(true)
-  const [availableTime, setAvailableTime] = useState([120])
-  const [timeOfDay] = useState(() => {
+  const { context: globalContext, updateContext } = useRecommendation()
+  
+  const [isAlone, setIsAlone] = useState(() => (globalContext.isAlone ?? true) as boolean)
+  const [availableTime, setAvailableTime] = useState(() => [(globalContext.max_runtime ?? 120) as number])
+  
+  useEffect(() => {
+    updateContext('isAlone', isAlone)
+    updateContext('max_runtime', availableTime[0])
+  }, [isAlone, availableTime, updateContext])
+
+  const timeOfDay = (() => {
     const hour = new Date().getHours()
     if (hour < 12) return 'Morning'
     if (hour < 17) return 'Afternoon'
@@ -62,7 +73,7 @@ export default function ContextAwareness() {
               <div className="space-y-4 font-mono text-xs italic">
                 <div className="flex justify-between p-3 rounded-xl bg-foreground/5 border border-foreground/5">
                   <span className="text-foreground/40">CURRENT_TIME:</span>
-                  <span className="text-foreground">{timeOfDay}</span>
+                  <span className="text-foreground">{timeOfDay()}</span>
                 </div>
                 <div className="flex justify-between p-3 rounded-xl bg-foreground/5 border border-foreground/5">
                   <span className="text-foreground/40">DEVICE_TYPE:</span>

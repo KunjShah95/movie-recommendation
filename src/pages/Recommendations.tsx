@@ -1,51 +1,19 @@
 import SummaryBanner from '@/components/sections/SummaryBanner'
 import MovieCard from '@/components/MovieCard'
 import { motion } from 'framer-motion'
-
-// Mock data - in a real app, this would come from an API
-const mockMovies = [
-  {
-    title: 'The Shawshank Redemption',
-    year: 1994,
-    poster: 'https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=800&h=1200&fit=crop',
-    emotionalTag: 'Resilience',
-    emotionalArc: 'Begins with despair and isolation, gradually builds hope through friendship, culminates in triumphant freedom and redemption.',
-    reasons: [
-      'Matches your preference for thoughtful, slow-burn storytelling',
-      'Features strong themes of resilience and hope',
-      'Perfect for solo viewing with full attention',
-      'Runtime fits your available time window',
-    ],
-  },
-  {
-    title: 'Eternal Sunshine',
-    year: 2004,
-    poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&h=1200&fit=crop',
-    emotionalTag: 'Introspective',
-    emotionalArc: 'Explores the complexity of memories and relationships through a non-linear emotional journey that balances heartbreak with beauty.',
-    reasons: [
-      'Offers profound insights into human relationships',
-      'Unique narrative structure rewards focused viewing',
-      'Emotional depth aligns with your introspective state',
-      'Leaves you with meaningful questions to contemplate',
-    ],
-  },
-  {
-    title: 'Inception',
-    year: 2010,
-    poster: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=800&h=1200&fit=crop',
-    emotionalTag: 'Intellectual',
-    emotionalArc: 'A high-stakes descent into the subconscious that challenges reality and emotional anchoring.',
-    reasons: [
-      'Complexity matches your desire for intellectual stimulation',
-      'Atmospheric intensity provides total immersion',
-      'Visual storytelling pushes the boundaries of perception',
-      'Thematic depth encourages post-viewing analysis',
-    ],
-  },
-]
+import { useRecommendation } from '@/context/RecommendationContext'
 
 export default function Recommendations() {
+  const { recommendations, loading } = useRecommendation()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-2xl font-mono italic animate-pulse">Consulting the cinematic archives...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="relative min-h-screen w-full bg-background overflow-x-hidden pb-40">
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -63,16 +31,23 @@ export default function Recommendations() {
             transition={{ delay: 0.5 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12"
           >
-            {mockMovies.map((movie, index) => (
-              <MovieCard
-                key={movie.title}
-                {...movie}
-                delay={index * 0.2}
-              />
-            ))}
+            {recommendations.length > 0 ? (
+              recommendations.map((movie, index) => (
+                <MovieCard
+                  key={movie.title}
+                  {...movie}
+                  delay={index * 0.2}
+                />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-20">
+                <p className="text-muted-foreground italic">No recommendations found yet. Try describing your mood in the Discovery section.</p>
+              </div>
+            )}
           </motion.div>
         </div>
       </main>
     </div>
   )
 }
+

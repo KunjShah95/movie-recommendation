@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { fadeInUp, staggerContainer } from '@/lib/animations'
 
@@ -11,8 +10,10 @@ const PRESET_MOODS = [
   { label: 'Chaotic', energy: 'High', color: 'bg-primary/5 text-primary/80 border-primary/10 hover:bg-primary/10' },
 ]
 
+import { useRecommendation } from '@/context/RecommendationContext'
+
 export default function MoodInput() {
-  const [mood, setMood] = useState('')
+  const { mood, setMood } = useRecommendation()
   const maxLength = 300
 
   return (
@@ -41,7 +42,7 @@ export default function MoodInput() {
             <button
               key={m.label}
               onClick={() => setMood(m.label + ": ")}
-              className={`px-6 py-2 rounded-full border text-sm font-semibold transition-all hover:scale-105 active:scale-95 ${m.color}`}
+              className={`px-6 py-2 rounded-full border text-sm font-semibold transition-all hover:scale-105 active:scale-95 ${m.color} ${mood.startsWith(m.label) ? 'border-primary bg-primary/20' : ''}`}
             >
               {m.label}
             </button>
@@ -52,7 +53,7 @@ export default function MoodInput() {
           <div className="relative">
             <Textarea
               value={mood}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMood(e.target.value)}
+              onChange={(e) => setMood(e.target.value)}
               placeholder="Start typing..."
               maxLength={maxLength}
               className="min-h-[200px] text-xl p-8 rounded-[2rem] bg-foreground/5 backdrop-blur-xl border-foreground/10 focus-visible:border-primary/20 transition-all resize-none italic placeholder:text-foreground/20"
@@ -66,3 +67,4 @@ export default function MoodInput() {
     </motion.section>
   )
 }
+
