@@ -6,6 +6,9 @@ import About from './pages/About'
 import Discovery from './pages/Discovery'
 import Recommendations from './pages/Recommendations'
 import Contact from './pages/Contact'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import SharePage from './pages/SharePage'
 import Header from './components/Header'
 import './index.css'
 
@@ -18,32 +21,38 @@ function ScrollToTop() {
 }
 import { ThemeProvider } from './components/ThemeProvider'
 import { RecommendationProvider } from './context/RecommendationProvider'
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="cinepulse-theme">
-      <RecommendationProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <div className="min-h-screen bg-background">
-            {/* Header Navigation */}
-            <Header />
+      <AuthProvider>
+        <RecommendationProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <div className="min-h-screen bg-background">
+              {/* Header Navigation */}
+              <Header />
 
-            {/* Content */}
-            <div className="relative">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/features" element={<Features />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/discovery" element={<Discovery />} />
-                <Route path="/recommendations" element={<Recommendations />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+              {/* Content */}
+              <div className="relative">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/discovery" element={<Discovery />} />
+                  <Route path="/recommendations" element={<Recommendations />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/share/:shareId" element={<SharePage />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </div>
             </div>
-          </div>
-        </BrowserRouter>
-      </RecommendationProvider>
+          </BrowserRouter>
+        </RecommendationProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

@@ -9,3 +9,7 @@ pytest
 httpx
 firecrawl-py
 google-generativeai
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
+cachetools

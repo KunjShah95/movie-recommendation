@@ -25,9 +25,13 @@ class ScoringService:
         )
         
         return {
-            "total_score": total_score,
-            "emotion_alignment": emotion_score,
-            "intent_alignment": intent_score
+            "total_score": round(total_score, 2),
+            "scores": {
+                "Emotional Sync": round(emotion_score * 100, 0),
+                "Intent Match": round(intent_score * 100, 0),
+                "Arc Resonance": 85, # Mocked for now
+                "DNA Compatibility": round(total_score * 100, 0)
+            }
         }
 
     def _score_emotion(self, movie: Movie, mood: str) -> float:

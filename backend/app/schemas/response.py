@@ -14,6 +14,7 @@ class MovieRecommendation(BaseModel):
     streamingPlatforms: List[dict] = []
     reasons: List[str]
     reasoning: str # Keep for backward compat or detailed text
+    alignmentScores: Optional[Dict[str, float]] = None
 
 class RecommendationResponse(BaseModel):
     recommendations: List[MovieRecommendation]

@@ -2,6 +2,7 @@ import logging
 import httpx
 from typing import Optional, Dict, Any
 from app.services.nlp_service import NLPService
+from app.services.data_sync_service import DataSyncService
 from app.models.movie import Movie
 from sqlalchemy.orm import Session
 from app.core.config import get_settings
@@ -25,6 +26,7 @@ class ResearchService:
 
     def __init__(self):
         self.nlp = NLPService()
+        self.data_sync = DataSyncService()
         self.firecrawl = None
         if settings.FIRECRAWL_API_KEY and FirecrawlApp:
             self.firecrawl = FirecrawlApp(api_key=settings.FIRECRAWL_API_KEY)
@@ -41,12 +43,23 @@ class ResearchService:
         if not movie_data:
             return None
             
-        # 2. Analyze the 'research' results using our Human-Centric NLP
+        # 2. Try to get TMDB data for better metadata
+        tmdb_results = await self.data_sync.search_tmdb_movies(movie_data['title'])
+        tmdb_id = None
+        poster_url = None
+        if tmdb_results:
+            match = tmdb_results[0] # Best match
+            tmdb_id = match.get('id')
+            poster_path = match.get('poster_path')
+            if poster_path:
+                poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
+
+        # 3. Analyze the 'research' results using our Human-Centric NLP
         analysis = self.nlp.analyze_text(
             f"{movie_data['title']} {movie_data['overview']}"
         )
         
-        # 3. Create the movie object
+        # 4. Create the movie object
         new_movie = Movie(
             title=movie_data['title'],
             overview=movie_data['overview'],
@@ -56,7 +69,9 @@ class ResearchService:
             emotional_arc=analysis["arc"],
             ending_type=analysis["ending"],
             pace=analysis["pace"],
-            tone=analysis["tone"]
+            tone=analysis["tone"],
+            tmdb_id=tmdb_id,
+            poster_url=poster_url
         )
         
         # 4. Save to DB for a smarter future

@@ -17,6 +17,7 @@ export interface Movie {
   streamingPlatforms?: StreamingPlatform[];
   reasons: string[];
   reasoning: string;
+  alignmentScores?: Record<string, number>;
 }
 
 export interface RecommendationContextType {

@@ -11,6 +11,8 @@ import { Icon } from '@iconify/react'
 import { scaleIn } from '@/lib/animations'
 import { Star, Play, Info, Bookmark, ExternalLink } from 'lucide-react'
 import { useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import DNAVisualizer from './DNAVisualizer'
 
 interface StreamingPlatform {
   name: string
@@ -30,6 +32,7 @@ interface MovieCardProps {
   type: string
   trailerUrl?: string
   streamingPlatforms?: StreamingPlatform[]
+  alignmentScores?: Record<string, number>
   delay?: number
 }
 
@@ -45,17 +48,27 @@ export default function MovieCard({
   type,
   trailerUrl,
   streamingPlatforms = [],
+  alignmentScores,
   delay = 0,
 }: MovieCardProps) {
-
+  const { token, isAuthenticated } = useAuth()
+  
   const [isWatchlisted, setIsWatchlisted] = useState(() => {
     if (typeof window === 'undefined') return false
     const watchlist = JSON.parse(localStorage.getItem('cinepulse_watchlist') || '[]')
     return watchlist.includes(id)
   })
 
-  const toggleWatchlist = (e: React.MouseEvent) => {
+
+
+  const toggleWatchlist = async (e: React.MouseEvent) => {
     e.stopPropagation()
+    
+    // Optimistic UI
+    const newState = !isWatchlisted
+    setIsWatchlisted(newState)
+    
+    // Update local storage for immediate persistence/guest use
     const watchlist = JSON.parse(localStorage.getItem('cinepulse_watchlist') || '[]')
     let newWatchlist
     if (isWatchlisted) {
@@ -64,7 +77,21 @@ export default function MovieCard({
       newWatchlist = [...watchlist, id]
     }
     localStorage.setItem('cinepulse_watchlist', JSON.stringify(newWatchlist))
-    setIsWatchlisted(!isWatchlisted)
+
+    // Backend sync if authenticated
+    if (isAuthenticated && token) {
+      try {
+        const method = newState ? 'POST' : 'DELETE'
+        await fetch(`http://localhost:8000/api/v1/watchlist/${id}`, {
+          method: method,
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      } catch (error) {
+        console.error('Failed to sync watchlist:', error)
+      }
+    }
   }
   return (
     <motion.div
@@ -101,7 +128,7 @@ export default function MovieCard({
           </Badge>
           <button 
             onClick={toggleWatchlist}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 ${
               isWatchlisted ? 'bg-primary text-primary-foreground' : 'bg-black/20 backdrop-blur-xl text-white hover:bg-white/20'
             }`}
           >
@@ -116,10 +143,12 @@ export default function MovieCard({
                <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground border-none px-3 py-0.5 font-mono text-[9px] tracking-[0.2em] uppercase">
                 {emotionalTag}
               </Badge>
-              {streamingPlatforms.length > 0 && (
-                <div className="flex gap-1 ml-1 translate-y-[-1px]">
-                  {streamingPlatforms.map((p, i) => (
-                    <Icon key={i} icon={p.icon} className="w-3.5 h-3.5 text-white/60 hover:text-white transition-colors cursor-pointer" />
+               {streamingPlatforms.length > 0 && (
+                <div className="flex gap-1.5 ml-2 translate-y-[-1px]">
+                  {streamingPlatforms.slice(0, 3).map((p, i) => (
+                    <a key={i} href={p.url} target="_blank" rel="noreferrer" className="group/p">
+                      <img src={p.icon} alt={p.name} className="w-4 h-4 rounded-md filter grayscale group-hover/p:grayscale-0 transition-all border border-white/10" />
+                    </a>
                   ))}
                 </div>
               )}
@@ -142,22 +171,30 @@ export default function MovieCard({
                   <Info className="w-3 h-3" />
                   AI Logic
                 </AccordionTrigger>
-                <AccordionContent className="bg-black/60 backdrop-blur-2xl rounded-2xl p-4 border border-white/10">
-                  <div className="space-y-4">
-                    <p className="text-[11px] text-white/90 italic leading-relaxed font-light">
-                      &ldquo;{reasoning}&rdquo;
-                    </p>
-                    <div className="pt-2 border-t border-white/10">
-                      <p className="text-[9px] text-primary/60 uppercase tracking-widest mb-2 font-bold">Why it fits your mood:</p>
-                      <ul className="space-y-1.5 ml-1">
-                        {reasons.slice(0, 3).map((reason, index) => (
-                          <li key={index} className="flex items-center gap-2 text-[9px] text-white/60 uppercase">
-                            <div className="w-1 h-1 rounded-full bg-primary/60" />
-                            {reason}
-                          </li>
-                        ))}
-                      </ul>
+                 <AccordionContent className="bg-black/60 backdrop-blur-3xl rounded-3xl p-6 border border-white/10 shadow-2xl">
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                       <p className="text-[11px] text-white/90 italic leading-relaxed font-light">
+                        &ldquo;{reasoning}&rdquo;
+                      </p>
+                      <div className="pt-4 border-t border-white/5">
+                        <p className="text-[9px] text-primary/60 uppercase tracking-widest mb-3 font-bold">Resonance Profile:</p>
+                        <ul className="space-y-2 ml-1">
+                          {reasons.slice(0, 3).map((reason, index) => (
+                            <li key={index} className="flex items-start gap-2 text-[9px] text-white/60 uppercase leading-tight">
+                              <div className="w-1 h-1 rounded-full bg-primary/60 mt-1" />
+                              {reason}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
+
+                    {alignmentScores && (
+                      <div className="pt-4 border-t border-white/5">
+                        <DNAVisualizer scores={alignmentScores} />
+                      </div>
+                    )}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -165,9 +202,12 @@ export default function MovieCard({
           </div>
 
           <div className="flex items-center gap-2 mt-1 translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
-            <button className="flex-1 h-10 rounded-xl bg-primary text-primary-foreground font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-2xl shadow-primary/20">
+             <button 
+              onClick={() => id && window.open(streamingPlatforms[0]?.url || '#', '_blank')}
+              className="flex-1 h-10 rounded-xl bg-primary text-primary-foreground font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-2xl shadow-primary/20 active:scale-95"
+            >
               <Play className="w-3 h-3 fill-current" />
-              Stream
+              {streamingPlatforms.length > 0 ? `Stream on ${streamingPlatforms[0].name}` : 'Stream Now'}
             </button>
             {trailerUrl && (
               <a 

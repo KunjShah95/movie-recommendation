@@ -1,10 +1,47 @@
 import SummaryBanner from '@/components/sections/SummaryBanner'
 import MovieCard from '@/components/MovieCard'
-import { motion } from 'framer-motion'
 import { useRecommendation } from '@/context/RecommendationContext'
+import { Button } from '@/components/ui/button'
+import { Share2, Check, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import SEO from '@/components/SEO'
 
 export default function Recommendations() {
-  const { recommendations, loading } = useRecommendation()
+  const { recommendations, loading, mood, intent, personality, context } = useRecommendation()
+  const [sharing, setSharing] = useState(false)
+  const [shared, setShared] = useState(false)
+
+  const handleShare = async () => {
+    if (sharing || shared) return
+    setSharing(true)
+    
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/share/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mood,
+          intent,
+          personality,
+          context,
+          movie_ids: recommendations.map(m => m.id)
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        const shareUrl = `${window.location.origin}${data.url}`
+        await navigator.clipboard.writeText(shareUrl)
+        setShared(true)
+        setTimeout(() => setShared(false), 3000)
+      }
+    } catch (error) {
+      console.error('Failed to share:', error)
+    } finally {
+      setSharing(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -21,6 +58,10 @@ export default function Recommendations() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/2 rounded-full blur-[120px]" />
       </div>
 
+      <SEO 
+        title="Your Recommendations"
+        description={`Curated films based on your ${mood} mood and ${intent} intent.`}
+      />
       <main className="relative z-10">
         <SummaryBanner />
         
@@ -34,7 +75,7 @@ export default function Recommendations() {
             {recommendations.length > 0 ? (
               recommendations.map((movie, index) => (
                 <MovieCard
-                  key={movie.title}
+                  key={movie.id}
                   {...movie}
                   delay={index * 0.2}
                 />
@@ -45,6 +86,32 @@ export default function Recommendations() {
               </div>
             )}
           </motion.div>
+
+          {recommendations.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+              className="mt-20 flex flex-col items-center gap-6"
+            >
+              <div className="w-12 h-px bg-foreground/10" />
+              <p className="text-xs font-mono text-foreground/30 uppercase tracking-[0.3em]">Found a vibe worth sharing?</p>
+              <Button
+                onClick={handleShare}
+                disabled={sharing}
+                className="h-14 px-10 rounded-full text-lg font-bold italic gap-3 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                {shared ? (
+                  <>LINK COPIED <Check className="w-5 h-5" /></>
+                ) : sharing ? (
+                  <>GENERATING... <Loader2 className="w-5 h-5 animate-spin" /></>
+                ) : (
+                  <>SHARE THIS MOOD <Share2 className="w-5 h-5" /></>
+                )}
+              </Button>
+            </motion.div>
+          )}
         </div>
       </main>
     </div>

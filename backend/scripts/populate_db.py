@@ -34,7 +34,9 @@ def populate_offline():
                 emotional_arc=m_data["emotional_arc"],
                 ending_type=m_data["ending_type"],
                 pace=m_data["pace"],
-                tone=m_data["tone"]
+                tone=m_data["tone"],
+                tmdb_id=m_data.get("tmdb_id"),
+                poster_url=m_data.get("poster_url")
             )
             db.add(movie)
             logger.info(f"Added {m_data['title']} ({m_data.get('type', 'movie')}) to database.")

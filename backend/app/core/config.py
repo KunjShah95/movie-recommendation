@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "CinePulse AI"
     API_V1_STR: str = "/api/v1"
     DEBUG: bool = False
+    SECRET_KEY: str = "super_secret_cinepulse_key_2024" # Default for dev, override in .env
 
     # Server
     HOST: str = "0.0.0.0"

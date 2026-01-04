@@ -70,3 +70,11 @@ class Movie(Base):
         String(50), nullable=False
         # uplifting | heavy | neutral
     )
+
+    tmdb_id: Mapped[int] = mapped_column(
+        Integer, nullable=True, index=True
+    )
+
+    poster_url: Mapped[str] = mapped_column(
+        String, nullable=True
+    )

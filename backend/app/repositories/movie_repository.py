@@ -77,3 +77,16 @@ class MovieRepository:
         result = db.execute(stmt)
         return result.scalars().all()
 
+    @staticmethod
+    def get_by_tmdb_id(db: Session, tmdb_id: int) -> Optional[Movie]:
+        stmt = select(Movie).where(Movie.tmdb_id == tmdb_id)
+        result = db.execute(stmt)
+        return result.scalars().first()
+
+    @staticmethod
+    def save(db: Session, movie: Movie) -> Movie:
+        db.add(movie)
+        db.commit()
+        db.refresh(movie)
+        return movie
+

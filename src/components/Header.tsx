@@ -4,11 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Zap } from 'lucide-react'
 import { Button } from './ui/button'
 import { ThemeToggle } from './ThemeToggle'
+import { useAuth } from '@/context/AuthContext'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
+  const { user, isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -66,11 +68,28 @@ export default function Header() {
             </nav>
             <div className="flex items-center gap-4 border-l border-foreground/10 pl-8 ml-4">
               <ThemeToggle />
-              <Link to="/discovery">
-                <Button size="sm" className="rounded-xl px-6 bg-primary text-primary-foreground font-bold h-10 hover:bg-primary/90 uppercase tracking-widest text-[10px] active:scale-95">
-                  Launch
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <div className="flex items-center gap-4">
+                   <div className="flex flex-col items-end">
+                    <span className="text-[9px] font-bold text-foreground/40 uppercase tracking-widest leading-none">Vibe Check</span>
+                    <span className="text-[11px] font-bold italic text-primary leading-tight">{user?.full_name || user?.email.split('@')[0]}</span>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={logout}
+                    className="rounded-xl h-10 px-4 text-[10px] font-bold uppercase tracking-widest text-foreground/40 hover:text-primary hover:bg-primary/5 transition-all"
+                  >
+                    Out
+                  </Button>
+                </div>
+              ) : (
+                <Link to="/login">
+                  <Button size="sm" className="rounded-xl px-6 bg-primary text-primary-foreground font-bold h-10 hover:bg-primary/90 uppercase tracking-widest text-[10px] active:scale-95">
+                    Launch
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
 
@@ -123,11 +142,21 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <Link to="/discovery" onClick={() => setMobileMenuOpen(false)}>
-                  <Button size="lg" className="w-full rounded-2xl bg-primary text-black font-bold h-16 uppercase tracking-widest text-xs">
-                    Launch Engine
+                {isAuthenticated ? (
+                  <Button 
+                    onClick={() => { logout(); setMobileMenuOpen(false); }}
+                    size="lg" 
+                    className="w-full rounded-2xl bg-foreground/5 text-foreground font-bold h-16 uppercase tracking-widest text-xs border border-foreground/10"
+                  >
+                    Sign Out ({user?.email.split('@')[0]})
                   </Button>
-                </Link>
+                ) : (
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                    <Button size="lg" className="w-full rounded-2xl bg-primary text-black font-bold h-16 uppercase tracking-widest text-xs">
+                      Launch Engine
+                    </Button>
+                  </Link>
+                )}
               </motion.div>
             </div>
           </motion.div>

@@ -36,3 +36,14 @@ class GeminiService:
         except Exception as e:
             logger.error(f"Gemini generation error: {e}")
             return f"The emotional arc of {movie_title} resonates deeply with your current state."
+
+    async def generate_raw_text(self, prompt: str) -> str:
+        if not self.enabled:
+            return "My cinematic systems are currently offline, but I am still here to guide you."
+            
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except Exception as e:
+            logger.error(f"Gemini raw generation error: {e}")
+            return "The archives are momentarily quiet. Please ask again."

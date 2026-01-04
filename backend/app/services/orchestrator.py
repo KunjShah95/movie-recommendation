@@ -13,6 +13,7 @@ from app.services.arc_service import ArcService
 from app.services.scoring_service import ScoringService
 from app.services.explanation_service import ExplanationService
 from app.services.gemini_service import GeminiService
+from app.services.data_sync_service import DataSyncService
 from app.core.logger import get_logger
 
 logger = get_logger(__name__)
@@ -27,7 +28,8 @@ class RecommendationOrchestrator:
         arc_service: ArcService = Depends(),
         scoring_service: ScoringService = Depends(),
         explanation_service: ExplanationService = Depends(),
-        gemini_service: GeminiService = Depends()
+        gemini_service: GeminiService = Depends(),
+        data_sync_service: DataSyncService = Depends()
     ):
         self.db = db
         self.emotion_service = emotion_service
@@ -37,6 +39,7 @@ class RecommendationOrchestrator:
         self.scoring_service = scoring_service
         self.explanation_service = explanation_service
         self.gemini_service = gemini_service
+        self.data_sync_service = data_sync_service
 
     async def get_recommendations(self, request: RecommendationRequest) -> RecommendationResponse:
         logger.info(f"Processing recommendation for mood: {request.mood}")
@@ -85,7 +88,7 @@ class RecommendationOrchestrator:
                 mood=request.mood,
                 score_details=score_details
             )
-            
+
             # AI Personalized Reasoning
             ai_reason = await self.gemini_service.generate_explanation(
                 movie_title=movie.title,
@@ -93,19 +96,33 @@ class RecommendationOrchestrator:
                 user_intent=request.intent or "watch something good"
             )
             
+            # Real-time Streaming Data (JustWatch)
+            streaming = []
+            if movie.tmdb_id:
+                streaming_data = await self.data_sync_service.fetch_streaming_providers(movie.tmdb_id)
+                # Parse flat list from providers
+                p_list = streaming_data.get('flatrate', [])
+                for p in p_list:
+                    streaming.append({
+                        "name": p.get('provider_name'),
+                        "icon": f"https://image.tmdb.org/t/p/original{p.get('logo_path')}",
+                        "url": f"https://www.themoviedb.org/movie/{movie.tmdb_id}/watch" # Deep link to TMDB watch
+                    })
+
             recommendations.append(MovieRecommendation(
                 id=movie.id,
                 title=movie.title,
                 year=movie.release_year or 2024,
-                poster=f"https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=800&h=1200&fit=crop", 
+                poster=movie.poster_url or f"https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=800&h=1200&fit=crop", 
                 backdrop=movie.backdrop_url or "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200",
                 type=movie.content_type or "movie",
                 emotionalTag=movie.tone.capitalize() if movie.tone else "Balanced",
                 emotionalArc=" -> ".join(movie.emotional_arc) if movie.emotional_arc else "Steady journey",
                 trailerUrl=movie.trailer_url,
-                streamingPlatforms=movie.streaming_platforms or [],
+                streamingPlatforms=streaming or movie.streaming_platforms or [],
                 reasons=reasoning_data["bullets"],
-                reasoning=ai_reason if self.gemini_service.enabled else reasoning_data["paragraph"]
+                reasoning=ai_reason if self.gemini_service.enabled else reasoning_data["paragraph"],
+                alignmentScores=score_details.get("scores")
             ))
 
         overall_explanation = self.explanation_service.generate_summary(

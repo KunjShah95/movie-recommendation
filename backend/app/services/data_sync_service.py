@@ -1,4 +1,5 @@
 import httpx
+from cachetools import TTLCache
 from typing import Dict, Any, Optional, List
 from app.core.config import get_settings
 from app.core.logger import get_logger
@@ -14,9 +15,16 @@ class DataSyncService:
     def __init__(self):
         self.tmdb_base = "https://api.themoviedb.org/3"
         self.omdb_base = "http://www.omdbapi.com"
+        # Persistence caches: 1 hour for general data, 24 hours for providers
+        self.search_cache = TTLCache(maxsize=100, ttl=3600)
+        self.details_cache = TTLCache(maxsize=100, ttl=3600)
+        self.streaming_cache = TTLCache(maxsize=100, ttl=86400)
 
     async def search_tmdb_movies(self, query: str) -> List[Dict[str, Any]]:
         """Search for movies on TMDB."""
+        if query in self.search_cache:
+            return self.search_cache[query]
+
         if not settings.TMDB_API_KEY or "your_tmdb_api_key" in settings.TMDB_API_KEY:
             logger.warning("TMDB API key is missing or using placeholder.")
             return []
@@ -32,7 +40,9 @@ class DataSyncService:
                 }
                 response = await client.get(url, params=params, timeout=20.0)
                 response.raise_for_status()
-                return response.json().get("results", [])
+                results = response.json().get("results", [])
+                self.search_cache[query] = results
+                return results
         except httpx.ConnectError:
             logger.error(f"❌ Connection Error: Could not reach TMDB. Try checking your internet or using a VPN.")
             return []
@@ -42,6 +52,9 @@ class DataSyncService:
 
     async def fetch_tmdb_details(self, movie_id: int) -> Dict[str, Any]:
         """Fetch full movie details from TMDB."""
+        if movie_id in self.details_cache:
+            return self.details_cache[movie_id]
+
         if not settings.TMDB_API_KEY:
             return {}
             
@@ -50,7 +63,9 @@ class DataSyncService:
                 url = f"{self.tmdb_base}/movie/{movie_id}"
                 params = {"api_key": settings.TMDB_API_KEY, "append_to_response": "credits,keywords"}
                 response = await client.get(url, params=params, timeout=20.0)
-                return response.json()
+                data = response.json()
+                self.details_cache[movie_id] = data
+                return data
         except Exception as e:
             logger.error(f"❌ Error fetching TMDB details: {str(e)}")
             return {}
@@ -69,6 +84,9 @@ class DataSyncService:
 
     async def fetch_streaming_providers(self, movie_id: int) -> Dict[str, Any]:
         """Fetch streaming data (JustWatch integration via TMDB)."""
+        if movie_id in self.streaming_cache:
+            return self.streaming_cache[movie_id]
+
         if not settings.TMDB_API_KEY:
             return {}
             
@@ -78,7 +96,9 @@ class DataSyncService:
             response = await client.get(url, params=params)
             results = response.json().get("results", {})
             # Return US providers as default or empty
-            return results.get("US", {})
+            provider_data = results.get("US", {})
+            self.streaming_cache[movie_id] = provider_data
+            return provider_data
 
     async def get_research_comparison(self, movie_id: int) -> Dict[str, Any]:
         """
