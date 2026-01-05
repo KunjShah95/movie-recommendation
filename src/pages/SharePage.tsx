@@ -107,7 +107,7 @@ export default function SharePage() {
         {/* Hero Section */}
         <section className="relative">
           <div className="absolute -top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-            01 // SHARED_CURATION
+            SHARED_CURATION
           </div>
           
           <motion.div
@@ -143,7 +143,7 @@ export default function SharePage() {
         {/* Curation Grid */}
         <section className="relative">
           <div className="absolute -top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-            02 // CURATED_FILES
+            CURATED_FILES
           </div>
 
           <motion.div
@@ -171,7 +171,7 @@ export default function SharePage() {
           className="relative pt-32 group"
         >
           <div className="absolute -top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-            03 // YOUR_DISCOVERY
+            YOUR_DISCOVERY
           </div>
           
           <div className="glass-dark rounded-[2rem] p-12 md:p-24 overflow-hidden relative border-primary/10">

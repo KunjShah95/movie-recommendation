@@ -24,7 +24,7 @@ export default function MoodInput() {
       variants={staggerContainer}
     >
       <div className="absolute top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-        01 // MOOD_BASELINE
+        MOOD_BASELINE
       </div>
 
       <div className="max-w-4xl space-y-12">

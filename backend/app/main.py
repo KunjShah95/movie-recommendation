@@ -15,18 +15,10 @@ app = FastAPI(
 )
 
 # Configure CORS - Allow frontend to communicate with backend
-origins = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3001",
-    "http://localhost:5173",  # Vite default
-    "http://127.0.0.1:5173",
-]
-
+# Using wildcard to allow any localhost port (Vite may use 3000, 3001, 3002, etc.)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods including OPTIONS
     allow_headers=["*"],  # Allow all headers

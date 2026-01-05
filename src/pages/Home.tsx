@@ -23,10 +23,6 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative pt-48 pb-32 px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="absolute top-12 left-6 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-              01 // CORE_SYSTEM
-            </div>
-            
             <div className="text-center space-y-12">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -89,7 +85,7 @@ export default function Home() {
         <section id="mockup" className="px-6 py-32 relative overflow-hidden">
           <div className="max-w-6xl mx-auto relative">
             <div className="absolute -top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-              02 // INTERFACE_RENDER
+              INTERFACE_RENDER
             </div>
             
             <motion.div
@@ -144,7 +140,7 @@ export default function Home() {
         <section className="px-6 py-32 relative">
           <div className="max-w-7xl mx-auto">
             <div className="absolute -top-12 left-6 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-              03 // CAPABILITIES
+              CAPABILITIES
             </div>
             
             <div className="mb-24 space-y-6">
@@ -257,7 +253,7 @@ export default function Home() {
           </div>
           
           <div className="flex flex-col md:flex-row justify-between items-center gap-10 pt-10 border-t border-foreground/5">
-            <p className="text-[10px] font-mono text-foreground/20 uppercase tracking-[0.4em]">© 2026 CinePulse_Systems // All Rights Reserved.</p>
+            <p className="text-[10px] font-mono text-foreground/20 uppercase tracking-[0.4em]">© 2026 CinePulse_Systems All Rights Reserved.</p>
             <div className="flex gap-8 text-[10px] font-mono text-foreground/20 uppercase tracking-[0.4em]">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="#" className="hover:text-foreground transition-colors">Terms</a>

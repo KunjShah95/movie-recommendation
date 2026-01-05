@@ -23,7 +23,7 @@ export default function IntentSelection() {
       variants={staggerContainer}
     >
       <div className="absolute top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-        02 // INTENT_MAPPING
+        INTENT_MAPPING
       </div>
 
       <div className="max-w-7xl space-y-16">

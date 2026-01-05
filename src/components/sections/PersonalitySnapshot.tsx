@@ -30,7 +30,7 @@ export default function PersonalitySnapshot() {
       variants={staggerContainer}
     >
       <div className="absolute top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-        04 // PREFERENCE_CALIBRATION
+        PREFERENCE_CALIBRATION
       </div>
 
       <div className="max-w-7xl">

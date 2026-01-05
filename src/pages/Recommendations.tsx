@@ -89,7 +89,7 @@ export default function Recommendations() {
         <div className="max-w-7xl mx-auto px-6 space-y-24">
           <section className="relative">
             <div className="absolute -top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-              02 // CURATED_RESULTS
+              CURATED_RESULTS
             </div>
 
             <motion.div 
@@ -133,7 +133,7 @@ export default function Recommendations() {
               className="relative pt-32"
             >
               <div className="absolute -top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-                03 // TRANSMISSION
+                TRANSMISSION
               </div>
 
               <div className="flex flex-col items-center gap-8 text-center bg-foreground/[0.02] border border-foreground/5 rounded-[3rem] p-12 md:p-20 relative overflow-hidden group">

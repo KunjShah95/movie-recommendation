@@ -82,7 +82,7 @@ export default function Header() {
               {isAuthenticated ? (
                 <div className="flex items-center gap-5">
                    <div className="flex flex-col items-end">
-                    <span className="text-[8px] font-mono text-foreground/40 uppercase tracking-widest leading-none">STATUS // ACTIVE</span>
+                    <span className="text-[8px] font-mono text-foreground/40 uppercase tracking-widest leading-none">STATUS ACTIVE</span>
                     <span className="text-[11px] font-bold italic text-primary leading-tight uppercase tracking-wider">{user?.full_name || user?.email.split('@')[0]}</span>
                   </div>
                   <Button 

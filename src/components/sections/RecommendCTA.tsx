@@ -41,7 +41,7 @@ export default function RecommendCTA() {
       variants={fadeInUp}
     >
       <div className="absolute top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-        06 // EXECUTION_PHASE
+        EXECUTION_PHASE
       </div>
 
       <div className="max-w-5xl mx-auto text-center space-y-12">

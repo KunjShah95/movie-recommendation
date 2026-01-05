@@ -79,7 +79,7 @@ export default function CinematicDetective() {
       variants={staggerContainer}
     >
       <div className="absolute top-12 left-0 font-mono text-[10px] text-primary/40 tracking-[0.4em] uppercase">
-        05 // COGNITIVE_ANALYSIS
+        COGNITIVE_ANALYSIS
       </div>
 
       <div className="max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-16">
@@ -144,7 +144,7 @@ export default function CinematicDetective() {
                     <div className="absolute inset-0 bg-primary/30 blur-md rounded-full animate-pulse" />
                     <Bot className="w-5 h-5 text-primary relative" />
                   </div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-primary/80">Archivist // ACTIVE_SESSION</span>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-primary/80">Archivist ACTIVE_SESSION</span>
               </div>
             </div>
         </div>
